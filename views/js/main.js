@@ -283,7 +283,7 @@ function getNoun(y) {
   } 
 }
 
-var adjectives = ["dark", "color", "whimsical", "shiny", "noise", "apocalyptic", "insulting", "praise", "scientific"];  // types of adjectives for pizza titles
+var adjectives = ["dark", "color", "whimsical", "shiny", "noisy", "apocalyptic", "insulting", "praise", "scientific"];  // types of adjectives for pizza titles
 var nouns = ["animals", "everyday", "fantasy", "gross", "horror", "jewelry", "places", "scifi"];                        // types of nouns for pizza titles
 
 // Generates random numbers for getAdj and getNoun functions and returns a new pizza name
@@ -499,14 +499,12 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
   console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 }
 
-// The following code for sliding background pizzas was pulled from Ilya's demo found at:
+// The original code for sliding background pizzas pulled from Ilya's demo found at:
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
-
-// Moves the sliding background pizzas based on scroll position
+// was modified. 
 
 /* HOW FRAME Rate was increased to 60 FPS: ********************************************************************** 
- * A.   Reduced the number of moving pizzas from 200 to 40, the maximum no. of pizza's visible on the screen
- *      anytime even at 50% display setting.
+ * A.   Reduced the number of moving pizzas from 200  to a dynamically calculated count ('pizza_cnt'), based on window.innerHeight.
  * B.   The method updatePositions() was refactored to: 
  *      I.   replace the querySelectorAll() method with the more efficient getElementsByClassName().
  *      II.  call the getElementsByClassName() method OUTSIDE of the updatePositions() method. No need to do this 
@@ -517,42 +515,25 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
  *           of 'phase' which at any scrollTop value will only have 5 possible values. 
  *      V.   group the updates to style.left so that all animated pizzas to which a specific value of 'phase' applies
  *           are updated at the same time. 
- * C.   Add the CSS3 attribute "backface-visibility: hidden" to the .mover class in style.css, so 
+ * C.   Used window.requestAnimationFrame() method in a callback for event 'scroll'. 
+ * D.   Added the CSS3 attribute "backface-visibility: hidden" to the .mover class in style.css, so 
  *      that the separate layers are created for the animated pizzas, and to reduce painting. 
  **********************************************************************************************************   
  */
+// Moves the sliding background pizzas based on scroll position
+
 var items = document.getElementsByClassName('mover'); 
-/*var phase = new Array(5);
-var basicLeft = new Array(8);
-*/
 var factor=0;
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
-  //console.log("scrollTop is "+document.body.scrollTop/1250); 
   var factor=(document.body.scrollTop/1250) ; 
   for (var i = 0; i < 5; i++) {
 	  var phase = Math.sin(factor + i );
-	  for (var j = 0; j < 25; j=j+5) {
+	  for (var j = 0; i+j < pizza_cnt; j=j+5) {
 		  	items[(i+j)].style.left = items[(i+j)].basicAny + 100 * phase + 'px';
-		  	//items[(i+j)].style.left = 	(((i + j) % 8) * 256) + 100 * phase + 'px';
-		  	//(((i + j)% cols) * s)
 	  }
   }
-/*
-  factor= document.body.scrollTop/1250;
-  phase[0] = Math.sin(factor);
-  phase[1] = Math.sin(factor+1);
-  phase[2] = Math.sin(factor+2);
-  phase[3] = Math.sin(factor+3);
-  phase[4] = Math.sin(factor+4);
-	  for (var j = 0; j < 25;j++) {
-		  	//items[j].style.left = items[j].basicLeft + 100 * phase[j % 5] + 'px';
-		    items[(j)].style.left = basicLeft[j % 8] + 100 * phase[j % 5] + 'px';
-
-	  }
-  */
-
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
   window.performance.mark("mark_end_frame");
@@ -564,34 +545,28 @@ function updatePositions() {
 }
 
 // runs updatePositions on scroll
-//window.addEventListener('scroll', updatePositions);
 window.addEventListener('scroll', function () {
 	window.requestAnimationFrame(updatePositions);
 }); 
-
-
-
+var pizza_cnt=0;
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
-  //var cols = 6; 
   var s = 256;
   var elem = "";
+  var h = window.innerHeight || document.documentElement.clientHeight|| document.body.clientHeight;
+  pizza_cnt = Math.ceil(h/s)*cols; 
   var parent = document.querySelector("#movingPizzas1");
 //  for (var i = 0; i < 200; i++) {
-  for (var i = 0; i < 25; i++) {
+  for (var i = 0; i < pizza_cnt; i++) {
     elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
     elem.style.height = "100px";
     elem.style.width = "73.333px";
     elem.basicAny = (i % cols) * s;
-    //console.log("basicLeft for Pizza "+i +"is "+((i % cols) * s));
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     parent.appendChild(elem);
   }
-/*  for ( i = 0; i < 8; i++) {
-	  basicLeft[i] = i*256; 
-  }*/
   updatePositions();
 });
