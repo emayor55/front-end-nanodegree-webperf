@@ -20,7 +20,7 @@ _______
 ________
 ###B. How FRAME RATE was increased to 60 FPS: 
 
-#####1. The number of moving pizzas was reduced from a constant (200) to a dynamically calculated count ('pizza_cnt'), based on window.innerHeight.
+#####1. The number of moving pizzas was reduced from a constant (200) to a dynamically calculated count **('pizza_cnt')**, based on **window.innerHeight**.
 
 #####2. The method **_updatePositions()_** was refactored as follows:
 
@@ -30,7 +30,7 @@ ________
    *  REPLACED the modulo operation **(i % 5 )** with an equivalent OUTER **'for..loop'** with 5 iterations, to calculate **'phase'** which at any **scrollTop** position can only have 5 possible values. 
    *  GROUPED the updates to the attribute **style.left** so that all animated pizzas to which a specific value of **'phase'** applies are updated one after another. 
 
-#####3. Used window.requestAnimationFrame() method in a callback for event 'scroll'.  
+#####3. Used **_window.requestAnimationFrame()_** method in a callback for event 'scroll'.  
 
 #####4. The CSS3 attribute **_"backface-visibility: hidden"_** was added to the **_.mover_** class in **_style.css_**, to cause creation of separate layers for the animated pizzas, and thus reduce painting. 
 ________
