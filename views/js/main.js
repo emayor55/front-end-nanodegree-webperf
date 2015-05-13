@@ -509,19 +509,17 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
  *      I.   replace the querySelectorAll() method with the more efficient getElementsByClassName().
  *      II.  call the getElementsByClassName() method OUTSIDE of the updatePositions() method. No need to do this 
  *           everytime updatePositions() is executed.
- *      III. do the calculation of the value of (document.body.scrollTop /1250) outside of 'for..loop'. 
+ *      III. calculate of the value of (document.body.scrollTop /1250) outside of 'for..loop'. 
  *           This value does not vary for every animated pizza and is solely dependent on value of 'scrollTop'.  
  *      IV.  replace the modulo operation (i % 5 ) with an equivalent OUTER for loop, to complete the calculation 
  *           of 'phase' which at any scrollTop value will only have 5 possible values. 
- *      V.   group the updates to style.left so that all animated pizzas to which a specific value of 'phase' applies
+ *      V.   group the updates to style.left so all animated pizzas to which a specific value of 'phase' applies
  *           are updated at the same time. 
  * C.   Used window.requestAnimationFrame() method in a callback for event 'scroll'. 
  * D.   Added the CSS3 attribute "backface-visibility: hidden" to the .mover class in style.css, so 
  *      that the separate layers are created for the animated pizzas, and to reduce painting. 
- **********************************************************************************************************   
- */
+ ***********************************************************************************************************/
 // Moves the sliding background pizzas based on scroll position
-
 var items = document.getElementsByClassName('mover'); 
 var factor=0;
 function updatePositions() {

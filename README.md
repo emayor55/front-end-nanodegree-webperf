@@ -17,7 +17,7 @@ _______
    * REMOVED the unnecessary call to the **_determineDx()_** method which requires determining the **'offsetWidth'**, an operation that probably triggers layout. At the same time, this method performs a roundabout calculation that is totally unnecessary. Since each one of three possible values of the argument **'size'** maps to a specific **'newWidth'** value, there was no need for any calculation.  
    * USED the constant **'100'** (number of pizza containers, which is known), in the **'for...loop'**,  instead of constantly 'calculating' for the size of the array returned by the  **_getElementsByClassName()_** operation.  
  
-   ________
+________
 ###B. How FRAME RATE was increased to 60 FPS: 
 
 #####1. The number of moving pizzas was reduced from a constant (200) to a dynamically calculated count ('pizza_cnt'), based on window.innerHeight.
