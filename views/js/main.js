@@ -1,3 +1,4 @@
+"use strict"; 
 /*
 Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
 jank-free at 60 frames per second.
@@ -472,8 +473,8 @@ window.performance.mark("mark_start_generating"); // collect timing data
 
   //var pizzasDiv = document.getElementById("randomPizzas");
 // This for-loop actually creates and appends all of the pizzas when the page loads
+var pizzasDiv = document.getElementById("randomPizzas");
 for (var i = 2; i < 100; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
   pizzasDiv.appendChild(pizzaElementGenerator(i));
  //console.log('made pizza '+i);
 }
@@ -521,17 +522,36 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
  **********************************************************************************************************   
  */
 var items = document.getElementsByClassName('mover'); 
+/*var phase = new Array(5);
+var basicLeft = new Array(8);
+*/
+var factor=0;
 function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
+  //console.log("scrollTop is "+document.body.scrollTop/1250); 
   var factor=(document.body.scrollTop/1250) ; 
   for (var i = 0; i < 5; i++) {
 	  var phase = Math.sin(factor + i );
-	  for (var j = 0; j < 40; j=j+5) {
-		  	items[(i+j)].style.left = items[(i+j)].basicLeft + 100 * phase + 'px';
+	  for (var j = 0; j < 25; j=j+5) {
+		  	items[(i+j)].style.left = items[(i+j)].basicAny + 100 * phase + 'px';
+		  	//items[(i+j)].style.left = 	(((i + j) % 8) * 256) + 100 * phase + 'px';
+		  	//(((i + j)% cols) * s)
 	  }
   }
+/*
+  factor= document.body.scrollTop/1250;
+  phase[0] = Math.sin(factor);
+  phase[1] = Math.sin(factor+1);
+  phase[2] = Math.sin(factor+2);
+  phase[3] = Math.sin(factor+3);
+  phase[4] = Math.sin(factor+4);
+	  for (var j = 0; j < 25;j++) {
+		  	//items[j].style.left = items[j].basicLeft + 100 * phase[j % 5] + 'px';
+		    items[(j)].style.left = basicLeft[j % 8] + 100 * phase[j % 5] + 'px';
 
+	  }
+  */
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
   // Super easy to create custom metrics.
@@ -544,7 +564,12 @@ function updatePositions() {
 }
 
 // runs updatePositions on scroll
-window.addEventListener('scroll', updatePositions);
+//window.addEventListener('scroll', updatePositions);
+window.addEventListener('scroll', function () {
+	window.requestAnimationFrame(updatePositions);
+}); 
+
+
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
@@ -554,15 +579,19 @@ document.addEventListener('DOMContentLoaded', function() {
   var elem = "";
   var parent = document.querySelector("#movingPizzas1");
 //  for (var i = 0; i < 200; i++) {
-  for (var i = 0; i < 40; i++) {
+  for (var i = 0; i < 25; i++) {
     elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
     elem.style.height = "100px";
     elem.style.width = "73.333px";
-    elem.basicLeft = (i % cols) * s;
+    elem.basicAny = (i % cols) * s;
+    //console.log("basicLeft for Pizza "+i +"is "+((i % cols) * s));
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     parent.appendChild(elem);
   }
+/*  for ( i = 0; i < 8; i++) {
+	  basicLeft[i] = i*256; 
+  }*/
   updatePositions();
 });
